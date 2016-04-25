@@ -1,0 +1,2 @@
+/tmp/logs/cluster33/logs/application_1457951643836_0016 does not exist.
+Log aggregation has not completed or is not enabled.
