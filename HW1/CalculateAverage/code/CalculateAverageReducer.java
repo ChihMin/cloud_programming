@@ -10,14 +10,10 @@ public class CalculateAverageReducer extends Reducer<Text,SumCountPair,Text,SumC
 	// Combiner implements method in Reducer
 	
     public void reduce(Text key, Iterable<SumCountPair> values, Context context) throws IOException, InterruptedException {
-		int sum = 0;
-		int count = 0;
         SumCountPair data = new SumCountPair(); 
         for (SumCountPair val: values) {
-           context.write(key, val);
+            val.pushFullData(data);    
         }
-        //context.write(key, val);
-        //SumCountPair pair = new SumCountPair(sum, count);
-        //context.write(key, pair);
+        context.write(key, data);
 	}
 }

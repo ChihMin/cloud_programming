@@ -57,11 +57,9 @@ public class SumCountPair implements Writable {
             int patternSize = in.readInt();
             for (int j = 0; j < patternSize; ++j) {
                 Integer offset = in.readInt();
-                System.out.println("[PATTERN] " + String.valueOf(i) + " " + String.valueOf(j) + " " + String.valueOf(offset));
                 patternList.add(offset);
             }
         }
-        System.out.println("[Write] Arraylist number = " + String.valueOf(docHash.get(1).size()));
     }
     
     public void pushData(Integer documentID, Integer offset) {
@@ -83,6 +81,16 @@ public class SumCountPair implements Writable {
 		return count;
 	}
 
+    
+    public void pushFullData(SumCountPair dataSet) {
+        for (Integer documentID: docList) {
+            ArrayList<Integer> patternList = docHash.get(documentID);
+            for (Integer offset: patternList) {
+                dataSet.pushData(documentID, offset);
+            }
+        }
+    }
+
     @Override
     public String toString() {
         StringBuffer str = new StringBuffer();
@@ -96,10 +104,7 @@ public class SumCountPair implements Writable {
             }
             str.append("];");
         }
-        
         return str.toString();
-        
-        //return String.valueOf(this.docList.size()) + " " + String.valueOf(docHash.get(1).size());
     }
 	
 }

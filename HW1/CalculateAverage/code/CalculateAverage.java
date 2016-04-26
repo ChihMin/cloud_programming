@@ -28,7 +28,7 @@ public class CalculateAverage {
 		
 		// set the class of each stage in mapreduce
 		job.setMapperClass(CalculateAverageMapper.class);
-		//job.setCombinerClass(CalculateAverageCombiner.class);
+		job.setCombinerClass(CalculateAverageCombiner.class);
 		//job.setPartitionerClass(CalculateAveragePartitioner.class);
 		//job.setSortComparatorClass(xxx.class);
 		job.setReducerClass(CalculateAverageReducer.class);
