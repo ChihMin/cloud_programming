@@ -5,7 +5,8 @@
 #hdfs dfs -cat /user/TA/CalculateAverage/Output/part-*
 
 your_hadoop_output_directory=HW1/output
-INPUT=HW1/input
+#INPUT=HW1/input
+INPUT=HW1/test
 hdfs dfs -rm -r ${your_hadoop_output_directory}
 hadoop jar CalculateAverage.jar calculateAverage.CalculateAverage $INPUT ${your_hadoop_output_directory}
 
