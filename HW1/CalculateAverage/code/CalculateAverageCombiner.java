@@ -12,14 +12,13 @@ public class CalculateAverageCombiner extends Reducer<Text,SumCountPair,Text,Sum
 		int sum = 0;
 		int count = 0;
         int valueCount = 0;
+        
 		for (SumCountPair val: values) {
             sum += val.getSum();
             count += val.getCount();
-//            System.out.println(" ~~~~~~~ " + key + " -> " + String.valueOf(val.getSum()) + " " + String.valueOf(val.getCount()));
             valueCount++;
 		}
         SumCountPair pair = new SumCountPair(sum, count);
-//        System.out.println("[COMBINER " + key + " " + String.valueOf(valueCount) + "]" + String.valueOf(pair.getSum()) + " " + String.valueOf(pair.getCount()));
 
         context.write(key, pair);
 	}

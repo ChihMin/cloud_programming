@@ -27,24 +27,30 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
         String fileName = fileSplit.getPath().getName();
         Configuration conf = context.getConfiguration();
         String indexStr = conf.get(fileName);
+        System.out.println("[ORIGIN STRING] " + value.toString());
         System.out.println("[File name] " + fileName + " -> [index] " + indexStr);
         System.out.println("[CODE POINT] " + String.valueOf(key.toString()));
 
         String[] strArray = value.toString().split("[^a-zA-Z]+");
+        int fromIndex = 0;
+        int documentID = Integer.valueOf(indexStr);
         for (String str : strArray) {
-            if (str.length() != 0)
-                System.out.println("[Mapper] " + fileName + " -> [ID = " + indexStr + "] -> " + str); 
+            if (str.length() != 0) {
+                SumCountPair dataSet = new SumCountPair();
+                fromIndex = value.toString().indexOf(str, fromIndex);
+                int offset = Integer.valueOf(key.toString()) + fromIndex;
+                fromIndex += str.length();
+                
+                dataSet.pushData(documentID, offset);
+                Text word = new Text();
+                word.set(str);
+                context.write(word, dataSet);
+                System.out.println("[MAPPER] " + dataSet.toString()); 
+                // System.out.println("[Mapper] " + fileName + " -> [Offset = " + String.valueOf(offset) + "] -> " + str); 
+            }
         }
         
-        // String[] stringArray = value.toString().split("\t");
-	    String keyword = "123";
         //int sum  = Integer.valueOf(stringArray[1]); 
-        int sum  = Integer.valueOf("1"); 
-        element = new SumCountPair(sum, 1);
-        SumCountPair pair = element;
 
-        Text word = new Text();
-        word.set(keyword);
-        context.write(word, element);
     }
 }
