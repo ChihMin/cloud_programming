@@ -98,11 +98,13 @@ public class SumCountPair implements Writable {
         for (Integer documentID : docList) {
             ArrayList<Integer> patternList = docHash.get(documentID);
             str.append(String.valueOf(documentID) + 
-                " " + String.valueOf(patternList.size()) + "[");
+                " " + String.valueOf(patternList.size()));
+            str.append(patternList.toString());
+            /*
             for (Integer offset : patternList) {
                 str.append(String.valueOf(offset) + ", ");
-            }
-            str.append("];");
+            }*/
+            str.append(";");
         }
         return str.toString();
     }

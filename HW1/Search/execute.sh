@@ -4,12 +4,14 @@
 #hadoop jar CalculateAverage.jar calculateAverage.CalculateAverage /user/shared/CalculateAverage/Input /user/TA/CalculateAverage/Output
 #hdfs dfs -cat /user/TA/CalculateAverage/Output/part-*
 
-your_hadoop_output_directory=HW1/output
+your_hadoop_output_directory=HW1/output_invertedindex
 #INPUT=HW1/input
-INPUT=HW1/input
+INPUT=$your_hadoop_output_directory
+your_hadoop_output_directory=HW1/output_retrieval
 hdfs dfs -rm -r ${your_hadoop_output_directory}
 hadoop jar CalculateAverage.jar calculateAverage.CalculateAverage $INPUT ${your_hadoop_output_directory}
 
 rm output/*
-hdfs dfs -cat ${your_hadoop_output_directory}/part-*
+# hdfs dfs -cat ${your_hadoop_output_directory}/part-*
 hdfs dfs -get ${your_hadoop_output_directory}/part-* output/
+hdfs dfs -get ${your_hadoop_output_directory}/doc* output/

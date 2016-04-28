@@ -26,11 +26,33 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
         FileSplit fileSplit = (FileSplit)context.getInputSplit();
         String fileName = fileSplit.getPath().getName();
         Configuration conf = context.getConfiguration();
-        String indexStr = conf.get(fileName);
-        System.out.println("[ORIGIN STRING] " + value.toString());
-        System.out.println("[File name] " + fileName + " -> [index] " + indexStr);
-        System.out.println("[CODE POINT] " + String.valueOf(key.toString()));
+        
+        
+        if (!fileName.equals("document_list.txt")) {
+            //System.out.println(value.toString());
+            String line = value.toString();
+            String[] docArray = line.split(";");
+            String[] termArray;
+            String word = docArray[0];
+            int df = Integer.valueOf(word.split("\t")[1]);
+            int tf;
+            word = word.split("\t")[0];
+            
+            System.out.print(word + " " + String.valueOf(df) + " : ");
+            for (int i = 1; i < docArray.length; ++i) {
+                String reg = "[.\\[\\],\\s]+";
+                termArray = docArray[i].split(reg);
+                tf = Integer.valueOf(termArray[1]);
+                System.out.print(String.valueOf(tf) + " -> ~");
+                for (int j = 2; j < termArray.length; ++j)
+                    System.out.print(termArray[j] + ", ");
+                System.out.println("~");    
+            }
 
+            
+            //System.out.println(word + " " + String.valueOf(df));
+        }
+/*
         String[] strArray = value.toString().split("[^a-zA-Z]+");
         int fromIndex = 0;
         int documentID = Integer.valueOf(indexStr);
@@ -46,11 +68,8 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
                 word.set(str);
                 context.write(word, dataSet);
                 System.out.println("[MAPPER] " + dataSet.toString()); 
-                // System.out.println("[Mapper] " + fileName + " -> [Offset = " + String.valueOf(offset) + "] -> " + str); 
             }
         }
-        
-        //int sum  = Integer.valueOf(stringArray[1]); 
-
+*/  
     }
 }
