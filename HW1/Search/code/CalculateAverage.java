@@ -42,6 +42,7 @@ public class CalculateAverage {
             System.out.println(String.valueOf(index++) + " --> (" + str + ") ");
         } System.out.println("");
         
+        conf.set("searchWord", args[2]); 
 /*
         int index = 0;
         for (FileStatus file : files) {
