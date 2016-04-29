@@ -7,11 +7,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.InputSplit;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+import java.io.*;
 
 public class SumCountPair implements Writable {
-
+    private String answer;
     private ArrayList<Integer> docList;
-    private HashMap<Integer, ArrayList<Integer>> docHash; 
+    private HashMap<Integer, ArrayList<Integer>> docHash;
+    private HashMap<Integer, ArrayList<String>> docNameHash; 
 	private int sum, count;
 
 	public SumCountPair() {
@@ -72,6 +83,9 @@ public class SumCountPair implements Writable {
         patternList.add(offset);
     }
     
+    public void setAnswer(String ans) {
+        this.answer = ans;
+    }
     	
 	public int getSum() {
 		return sum;
@@ -90,23 +104,49 @@ public class SumCountPair implements Writable {
             }
         }
     }
+    
+    public void offsetParse(String inputPath, FileSystem fs) throws IOException, InterruptedException{
+        System.out.println("[offsetParse]");
+        this.docNameHash = new HashMap<Integer, ArrayList<String>>();
+        for (Integer documentID : docList) {
+            ArrayList<Integer> offsetList = docHash.get(documentID);
+            ArrayList<String> termList = new ArrayList<String>();
+            for (Integer offset: offsetList) { 
+                BufferedReader br = new BufferedReader(
+                    new InputStreamReader(
+                        fs.open(new Path(inputPath)), "UTF8" 
+                    )
+                );
+
+                String termSeq;
+                br.skip(offset);
+                termSeq = br.readLine();
+                br.close();
+                termList.add(termSeq);
+                System.out.println(termSeq + ", ");
+            }
+            System.out.println("[PARSE] " + termList.toString());
+            docNameHash.put(documentID, termList);
+        }
+    }
 
     @Override
     public String toString() {
         StringBuffer str = new StringBuffer();
-        str.append(String.valueOf(docList.size()) + ";");
+        //str.append(String.valueOf(docList.size()) + ";");
         for (Integer documentID : docList) {
-            ArrayList<Integer> patternList = docHash.get(documentID);
-            str.append(String.valueOf(documentID) + 
-                " " + String.valueOf(patternList.size()));
-            str.append(patternList.toString());
-            /*
-            for (Integer offset : patternList) {
-                str.append(String.valueOf(offset) + ", ");
-            }*/
-            str.append(";");
+            ArrayList<String> patternList = docNameHash.get(documentID);
+            ArrayList<Integer> offsetList = docHash.get(documentID);
+            //str.append(String.valueOf(documentID) + 
+            //    " " + String.valueOf(patternList.size()) + "\n");
+            
+            int index = 0;
+            for (String pattern: patternList) {
+                str.append(String.valueOf(offsetList.get(index++)));
+                str.append(": " + pattern + "\n");
+            }
         }
-        return str.toString();
+        return str.toString() + "\n";
     }
 	
 }

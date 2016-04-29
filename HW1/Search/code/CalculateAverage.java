@@ -24,6 +24,7 @@ public class CalculateAverage {
             )
         );
         
+        int documentNumber = 0; 
         String line;
         line = br.readLine();
         while (line != null) {
@@ -32,17 +33,14 @@ public class CalculateAverage {
             conf.set(docKeyValue[0], docKeyValue[1]);
             System.out.println(docKeyValue[0] + " " + docKeyValue[1]);
             line = br.readLine();
+            documentNumber++;
         }
         br.close();
-
-        String test = "[12, 123, 123, 3433, 341]";
-        String[] arr = test.split("[\\[,\\s\\]]+");
-        int index = 0;
-        for (String str: arr) {
-            System.out.println(String.valueOf(index++) + " --> (" + str + ") ");
-        } System.out.println("");
         
-        conf.set("searchWord", args[2]); 
+        conf.set("searchWord", args[2]);
+        conf.set("inputPath", args[0]);
+        conf.set("outputPath", args[1]);
+        conf.set("documentNumber", String.valueOf(documentNumber));
 /*
         int index = 0;
         for (FileStatus file : files) {
@@ -58,17 +56,18 @@ public class CalculateAverage {
 		job.setMapperClass(CalculateAverageMapper.class);
 		//job.setCombinerClass(CalculateAverageCombiner.class);
 		//job.setPartitionerClass(CalculateAveragePartitioner.class);
-		//job.setSortComparatorClass(xxx.class);
-		//job.setReducerClass(CalculateAverageReducer.class);
+		job.setSortComparatorClass(CalculateAverageComparator.class);
+		job.setReducerClass(CalculateAverageReducer.class);
 		
 		// set the output class of Mapper and Reducer
-		//job.setMapOutputKeyClass(Text.class);
-		//job.setMapOutputValueClass(SumCountPair.class);
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(SumCountPair.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(SumCountPair.class);
-		
+        job.setOutputFormatClass(MyTextOutputFormat.class);	    
+	
 		// set the number of reducer
-		//job.setNumReduceTasks(1);
+		job.setNumReduceTasks(1);
 		
         // set global varialbe for hadoop
 

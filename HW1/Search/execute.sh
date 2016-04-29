@@ -9,9 +9,10 @@ your_hadoop_output_directory=HW1/output_invertedindex
 INPUT=$your_hadoop_output_directory
 your_hadoop_output_directory=HW1/output_retrieval
 hdfs dfs -rm -r ${your_hadoop_output_directory}
-hadoop jar CalculateAverage.jar calculateAverage.CalculateAverage $INPUT ${your_hadoop_output_directory}
+hadoop jar CalculateAverage.jar calculateAverage.CalculateAverage $INPUT ${your_hadoop_output_directory} cousin
 
 rm output/*
 # hdfs dfs -cat ${your_hadoop_output_directory}/part-*
-hdfs dfs -get ${your_hadoop_output_directory}/part-* output/
+hdfs dfs -get ${your_hadoop_output_directory}/out* output/
+hdfs dfs -get ${your_hadoop_output_directory}/part* output/
 hdfs dfs -get ${your_hadoop_output_directory}/doc* output/

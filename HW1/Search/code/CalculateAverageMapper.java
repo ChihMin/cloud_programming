@@ -1,9 +1,10 @@
 package calculateAverage;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.StringTokenizer;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.lang.Math;
 
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.IntWritable;
@@ -14,8 +15,11 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 
 public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, SumCountPair> {
@@ -29,15 +33,24 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
         Configuration conf = context.getConfiguration();
         HashMap<String, ArrayList<Integer>> docHash;
         
+        FileSystem fs = FileSystem.get(conf);
+        /*
+        String inputPath = conf.get("inputPath");
+        BufferedReader br = new BufferedReader(
+            new InputStreamReader(
+                fs.open(new Path(inputPath + "/document_list.txt"))
+            )
+        );
+        */
         String searchWord = conf.get("searchWord");
-
         if (!fileName.equals("document_list.txt")) {
             //System.out.println(value.toString());
             String line = value.toString();
             String[] docArray = line.split(";");
             String[] termArray;
             String word = docArray[0];
-            int df = Integer.valueOf(word.split("\t")[1]);
+            double N = Double.valueOf(conf.get("documentNumber"));
+            double df = Double.valueOf(word.split("\t")[1]);
             word = word.split("\t")[0];
             
             if (searchWord.equals(word)) {
@@ -45,34 +58,37 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
                 for (int i = 1; i < docArray.length; ++i) {
                     String reg = "[.\\[\\],\\s]+";
                     termArray = docArray[i].split(reg);
-                    int documentID = Integer.valueOf(termArray[0]);
-                    int tf = Integer.valueOf(termArray[1]);
-                    System.out.print("(" + String.valueOf(documentID) + ", " + String.valueOf(tf) + ") -> ~");
+                    String documentID = termArray[0];
+                    double tf = Double.valueOf(termArray[1]);
+                    double score = tf * Math.log10(N / df);
+                    SumCountPair dataSet = new SumCountPair();
+                    Text docID = new Text();
+                    
+                    System.out.print("(" + String.valueOf(documentID) + ", " + String.valueOf(tf) + ", " + String.valueOf(score) +  ") -> ~");
                     for (int j = 2; j < termArray.length; ++j) {
-                        System.out.print(termArray[j] + ", ");
+                        dataSet.pushData(Integer.valueOf(documentID), Integer.valueOf(termArray[j]));
+                        System.out.print(termArray[j] + "->");
+                        /*
+                        String inputPath = "HW1/input/" + conf.get(documentID);
+                        String termSeq;
+                        BufferedReader br = new BufferedReader(
+                            new InputStreamReader(
+                                fs.open(new Path(inputPath)), "UTF8" 
+                            )
+                        );
+                        
+                        br.skip(Integer.valueOf(termArray[j]));
+                        termSeq = br.readLine();
+                        br.close();
+                        System.out.print(String.valueOf(termSeq) + ", ");
+                        */
                     }
+                    dataSet.setAnswer(conf.get(documentID));
+                    docID.set(String.valueOf(score) + " " + conf.get(documentID));
+                    context.write(docID, dataSet);
                     System.out.println("~");    
                 }
             }
         }
-/*
-        String[] strArray = value.toString().split("[^a-zA-Z]+");
-        int fromIndex = 0;
-        int documentID = Integer.valueOf(indexStr);
-        for (String str : strArray) {
-            if (str.length() != 0) {
-                SumCountPair dataSet = new SumCountPair();
-                fromIndex = value.toString().indexOf(str, fromIndex);
-                int offset = Integer.valueOf(key.toString()) + fromIndex;
-                fromIndex += str.length();
-                
-                dataSet.pushData(documentID, offset);
-                Text word = new Text();
-                word.set(str);
-                context.write(word, dataSet);
-                System.out.println("[MAPPER] " + dataSet.toString()); 
-            }
-        }
-*/  
     }
 }
