@@ -53,7 +53,7 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
             double df = Double.valueOf(word.split("\t")[1]);
             word = word.split("\t")[0];
             
-            if (searchWord.equals(word)) {
+            if (searchWord.toLowerCase().equals(word)) {
                 System.out.print(word + " " + String.valueOf(df) + " : ");
                 for (int i = 1; i < docArray.length; ++i) {
                     String reg = "[.\\[\\],\\s]+";

@@ -44,7 +44,7 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
                 
                 dataSet.pushData(documentID, offset);
                 Text word = new Text();
-                word.set(str);
+                word.set(str.toLowerCase());
                 context.write(word, dataSet);
                 System.out.println("[MAPPER] " + dataSet.toString()); 
                 // System.out.println("[Mapper] " + fileName + " -> [Offset = " + String.valueOf(offset) + "] -> " + str); 
