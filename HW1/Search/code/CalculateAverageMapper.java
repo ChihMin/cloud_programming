@@ -77,8 +77,4 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
             }
         }
     }
-
-    private boolean isSameWord(String strA, String strB) {
-    
-    }
 }
