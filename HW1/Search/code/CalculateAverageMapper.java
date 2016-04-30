@@ -68,20 +68,6 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
                     for (int j = 2; j < termArray.length; ++j) {
                         dataSet.pushData(Integer.valueOf(documentID), Integer.valueOf(termArray[j]));
                         System.out.print(termArray[j] + "->");
-                        /*
-                        String inputPath = "HW1/input/" + conf.get(documentID);
-                        String termSeq;
-                        BufferedReader br = new BufferedReader(
-                            new InputStreamReader(
-                                fs.open(new Path(inputPath)), "UTF8" 
-                            )
-                        );
-                        
-                        br.skip(Integer.valueOf(termArray[j]));
-                        termSeq = br.readLine();
-                        br.close();
-                        System.out.print(String.valueOf(termSeq) + ", ");
-                        */
                     }
                     dataSet.setAnswer(conf.get(documentID));
                     docID.set(String.valueOf(score) + " " + conf.get(documentID));
@@ -90,5 +76,9 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
                 }
             }
         }
+    }
+
+    private boolean isSameWord(String strA, String strB) {
+    
     }
 }

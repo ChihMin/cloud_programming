@@ -31,7 +31,7 @@ public class CalculateAverage {
             //System.out.println(line);
             String[] docKeyValue = line.split(" ");
             conf.set(docKeyValue[0], docKeyValue[1]);
-            System.out.println(docKeyValue[0] + " " + docKeyValue[1]);
+            //System.out.println(docKeyValue[0] + " " + docKeyValue[1]);
             line = br.readLine();
             documentNumber++;
         }
