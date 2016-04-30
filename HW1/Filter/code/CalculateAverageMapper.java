@@ -53,6 +53,8 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
             double df = Double.valueOf(word.split("\t")[1]);
             word = word.split("\t")[0];
             
+            searchWord = searchWord.toLowerCase();
+            word = word.toLowerCase();
             if (searchWord.equals(word)) {
                 System.out.print(word + " " + String.valueOf(df) + " : ");
                 for (int i = 1; i < docArray.length; ++i) {
@@ -69,8 +71,7 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
                         dataSet.pushData(Integer.valueOf(documentID), Integer.valueOf(termArray[j]));
                         System.out.print(termArray[j] + "->");
                     }
-                    dataSet.setAnswer(conf.get(documentID));
-                    docID.set(String.valueOf(score) + " " + conf.get(documentID));
+                    docID.set(searchWord);
                     context.write(docID, dataSet);
                     System.out.println("~");    
                 }

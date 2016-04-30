@@ -3,24 +3,15 @@
 #hdfs dfs -rm -r /user/TA/CalculateAverage/Output/
 #hadoop jar CalculateAverage.jar calculateAverage.CalculateAverage /user/shared/CalculateAverage/Input /user/TA/CalculateAverage/Output
 #hdfs dfs -cat /user/TA/CalculateAverage/Output/part-*
-if [ $# -lt 2 ]; then
-  echo "Please input search word & enable/disable extend search"
+if [ $# -lt 1 ]; then
+  echo "Please input search word"
   exit 1
 fi
 
-
 your_hadoop_output_directory=HW1/output_invertedindex
-
-INPUT=""
-if [ $2 == "enable" ]; then
-  src=HW1/output_filter
-  hdfs dfs -cp -f $your_hadoop_output_directory/document_list.txt $src/.
-  INPUT=$src
-else
-  INPUT=$your_hadoop_output_directory
-fi
-
-your_hadoop_output_directory=HW1/output_retrieval
+#INPUT=HW1/input
+INPUT=$your_hadoop_output_directory
+your_hadoop_output_directory=HW1/output_filter
 hdfs dfs -rm -r ${your_hadoop_output_directory}
 hadoop jar CalculateAverage.jar calculateAverage.CalculateAverage $INPUT ${your_hadoop_output_directory} $1
 
