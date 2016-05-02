@@ -8,12 +8,11 @@ fi
 
 rm output_retrieval.txt
 
-if [ $2 == "enable" ]; then
-  cd Filter
-    ./compile.sh
-    ./execute.sh $1
-  cd -
-fi
+cd Filter
+  ./compile.sh
+  ./execute.sh $1 $2
+cd -
+
 cd Search
   ./compile.sh
   ./execute.sh $1 $2

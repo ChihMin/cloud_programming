@@ -3,8 +3,8 @@
 #hdfs dfs -rm -r /user/TA/CalculateAverage/Output/
 #hadoop jar CalculateAverage.jar calculateAverage.CalculateAverage /user/shared/CalculateAverage/Input /user/TA/CalculateAverage/Output
 #hdfs dfs -cat /user/TA/CalculateAverage/Output/part-*
-if [ $# -lt 1 ]; then
-  echo "Please input search word"
+if [ $# -lt 2 ]; then
+  echo "Please input search word and ignore case-sensitive"
   exit 1
 fi
 
@@ -13,7 +13,7 @@ your_hadoop_output_directory=HW1/output_invertedindex
 INPUT=$your_hadoop_output_directory
 your_hadoop_output_directory=HW1/output_filter
 hdfs dfs -rm -r ${your_hadoop_output_directory}
-hadoop jar CalculateAverage.jar calculateAverage.CalculateAverage $INPUT ${your_hadoop_output_directory} $1
+hadoop jar CalculateAverage.jar calculateAverage.CalculateAverage $INPUT ${your_hadoop_output_directory} $1 $2
 
 rm output/*
 # hdfs dfs -cat ${your_hadoop_output_directory}/part-*

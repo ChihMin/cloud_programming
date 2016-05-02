@@ -41,6 +41,8 @@ public class CalculateAverage {
         conf.set("inputPath", args[0]);
         conf.set("outputPath", args[1]);
         conf.set("documentNumber", String.valueOf(documentNumber));
+        conf.set("caseIngnore", args[3]);
+        
 /*
         int index = 0;
         for (FileStatus file : files) {

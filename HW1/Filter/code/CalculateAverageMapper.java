@@ -42,7 +42,9 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
             )
         );
         */
-        String searchWord = conf.get("searchWord");
+        String wordKey = conf.get("searchWord");
+        String[] searchWords = wordKey.split("/");
+        
         if (!fileName.equals("document_list.txt")) {
             //System.out.println(value.toString());
             String line = value.toString();
@@ -53,27 +55,36 @@ public class CalculateAverageMapper extends Mapper<LongWritable, Text, Text, Sum
             double df = Double.valueOf(word.split("\t")[1]);
             word = word.split("\t")[0];
             
-            searchWord = searchWord.toLowerCase();
-            word = word.toLowerCase();
-            if (searchWord.equals(word)) {
-                System.out.print(word + " " + String.valueOf(df) + " : ");
-                for (int i = 1; i < docArray.length; ++i) {
-                    String reg = "[.\\[\\],\\s]+";
-                    termArray = docArray[i].split(reg);
-                    String documentID = termArray[0];
-                    double tf = Double.valueOf(termArray[1]);
-                    double score = tf * Math.log10(N / df);
-                    SumCountPair dataSet = new SumCountPair();
-                    Text docID = new Text();
-                    
-                    System.out.print("(" + String.valueOf(documentID) + ", " + String.valueOf(tf) + ", " + String.valueOf(score) +  ") -> ~");
-                    for (int j = 2; j < termArray.length; ++j) {
-                        dataSet.pushData(Integer.valueOf(documentID), Integer.valueOf(termArray[j]));
-                        System.out.print(termArray[j] + "->");
+            for (String searchedWord: searchWords) {
+                if (searchedWord.equals(""))
+                    continue;
+                
+                String searchWord = searchedWord;
+                if (conf.get("caseIngnore").equals("enable")) {
+                    searchWord = searchedWord.toLowerCase();
+                    word = word.toLowerCase();
+                }
+
+                if (searchWord.equals(word)) {
+                    System.out.print(word + " " + String.valueOf(df) + " : ");
+                    for (int i = 1; i < docArray.length; ++i) {
+                        String reg = "[.\\[\\],\\s]+";
+                        termArray = docArray[i].split(reg);
+                        String documentID = termArray[0];
+                        double tf = Double.valueOf(termArray[1]);
+                        double score = tf * Math.log10(N / df);
+                        SumCountPair dataSet = new SumCountPair();
+                        Text docID = new Text();
+                        
+                        System.out.print("(" + String.valueOf(documentID) + ", " + String.valueOf(tf) + ", " + String.valueOf(score) +  ") -> ~");
+                        for (int j = 2; j < termArray.length; ++j) {
+                            dataSet.pushData(Integer.valueOf(documentID), Integer.valueOf(termArray[j]));
+                            System.out.print(termArray[j] + "->");
+                        }
+                        docID.set(wordKey);
+                        context.write(docID, dataSet);
+                        System.out.println("~");    
                     }
-                    docID.set(searchWord);
-                    context.write(docID, dataSet);
-                    System.out.println("~");    
                 }
             }
         }

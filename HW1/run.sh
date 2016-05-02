@@ -19,15 +19,4 @@ cd InvertedIndex
   cp output/part* ../output_invertedindex.txt
 cd -
 
-if [ $3 == "enable" ]; then
-  cd Filter
-    ./compile.sh
-    ./execute.sh $2
-  cd -
-fi
-
-cd Search
-  ./compile.sh
-  ./execute.sh $2 $3
-  cp output/output_retrieval.txt ../
-cd -
+./search.sh $2 $3
